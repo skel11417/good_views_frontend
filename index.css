@@ -1,0 +1,11 @@
+.gif {
+  background-color: blue;
+  height: 200px;
+  width: 200px;
+  margin: 10px;
+  display: inline-grid;
+}
+
+.contain {
+  object-fit: contain;
+}
