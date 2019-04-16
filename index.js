@@ -96,18 +96,37 @@ function showMovie(movie) {
   ratingHead.innerText = "Rate this Movie!";
 
   ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
-  // ratingDiv.innerHTML = `<h5>Rate this Movie!</h5>
-  // <span id="1" class="fa fa-star"></span>
-  // <span id="2" class="fa fa-star"></span>
-  // <span id="3" class="fa fa-star"></span>
-  // <span id="4" class="fa fa-star"></span>
-  // <span id="5" class="fa fa-star"></span>`;
 
   movieDetails.append(year, rated, director, actors);
   movieDiv.append(titleH, poster, movieDetails, ratingDiv);
   main.appendChild(movieDiv);
-  document.querySelectorAll(".fa").forEach(star => {
-    star.addEventListener("click", rateMovie);
+  let review = ratedByUser(movie, 1);
+  if (review) {
+    renderStars(review);
+  } else {
+    document.querySelectorAll(".fa").forEach(star => {
+      star.addEventListener("click", rateMovie);
+    });
+  }
+}
+
+function ratedByUser(movie, user) {
+  let rated = false;
+  movie.reviews.forEach(review => {
+    if (review.user_id == user) {
+      rated = review;
+    }
+  });
+  return rated;
+}
+
+function renderStars(review) {
+  let rating = review.rating;
+  let stars = Array.prototype.slice
+    .call(document.querySelectorAll(".fa"))
+    .slice(0, rating);
+  stars.forEach(star => {
+    star.className += " checked";
   });
 }
 
@@ -122,5 +141,12 @@ function rateMovie(event) {
     body: JSON.stringify({ user_id: "1", movie_id: movieId, rating: rating })
   })
     .then(resp => resp.json())
-    .then(json => console.log(json));
+    .then(review => {
+      renderStars(review);
+      document.querySelectorAll(".fa").forEach(star => {
+        star.removeEventListener("click", rateMovie);
+      });
+    });
 }
+
+// function ratingCheck() {}
