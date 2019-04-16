@@ -69,6 +69,7 @@ function showMovie(movie) {
   let rated = document.createElement("li");
   let director = document.createElement("li");
   let actors = document.createElement("li");
+  let plot = document.createElement("li")
 
   movieDiv.id = "movie"
   movieDiv.dataset.id = movie.id;
@@ -77,6 +78,7 @@ function showMovie(movie) {
   rated.innerText = `Rated: ${movie.rated}`;
   director.innerText = `Directed by: ${movie.director}`;
   actors.innerText = `Starring: ${movie.actors}`;
+  plot.innerText = `Summary: ${movie.plot}`
   poster.src = movie.poster;
   let ratingDiv = document.createElement("div");
   ratingDiv.id = "rating"
@@ -103,7 +105,7 @@ function showMovie(movie) {
 
   ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
 
-  movieDetails.append(year, rated, director, actors);
+  movieDetails.append(year, rated, director, actors, plot);
   movieDiv.append(titleH, poster, movieDetails, ratingDiv);
   main.appendChild(movieDiv);
 
@@ -138,6 +140,9 @@ function renderReviewForm(){
   reviewForm.id = "review-form"
   reviewForm.addEventListener('submit', addReviewContent)
 
+  let formLabel = document.createElement('label')
+  formLabel.innerText = "Add your review:"
+
   let reviewContent = document.createElement('textarea')
   reviewContent.type = 'text'
   reviewContent.name = "content"
@@ -145,7 +150,7 @@ function renderReviewForm(){
   let submitButton = document.createElement('input')
   submitButton.type = 'submit'
 
-  reviewForm.append(reviewContent, submitButton)
+  reviewForm.append(formLabel, reviewContent, submitButton)
   ratingDiv.appendChild(reviewForm)
 }
 
