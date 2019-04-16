@@ -60,8 +60,67 @@ function showMovie(movie) {
   let main = document.getElementById("main");
   main.innerHTML = "";
   let movieDiv = document.createElement("div");
+  let titleH = document.createElement("h2");
   let poster = document.createElement("img");
+  let movieDetails = document.createElement("ul");
+  let year = document.createElement("li");
+  let rated = document.createElement("li");
+  let director = document.createElement("li");
+  let actors = document.createElement("li");
+
+  movieDiv.dataset.id = movie.id;
+  titleH.innerText = movie.title;
+  year.innerText = `Released: ${movie.year}`;
+  rated.innerText = `Rated: ${movie.rated}`;
+  director.innerText = `Directed by: ${movie.director}`;
+  actors.innerText = `Starring: ${movie.actors}`;
   poster.src = movie.poster;
-  movieDiv.appendChild(poster);
+  let ratingDiv = document.createElement("div");
+  let star1 = document.createElement("span");
+  let star2 = document.createElement("span");
+  let star3 = document.createElement("span");
+  let star4 = document.createElement("span");
+  let star5 = document.createElement("span");
+  let ratingHead = document.createElement("h5");
+
+  star1.dataset.id = "1";
+  star1.className = "fa fa-star";
+  star2.dataset.id = "2";
+  star2.className = "fa fa-star";
+  star3.dataset.id = "3";
+  star3.className = "fa fa-star";
+  star4.dataset.id = "4";
+  star4.className = "fa fa-star";
+  star5.dataset.id = "5";
+  star5.className = "fa fa-star";
+  ratingHead.innerText = "Rate this Movie!";
+
+  ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
+  // ratingDiv.innerHTML = `<h5>Rate this Movie!</h5>
+  // <span id="1" class="fa fa-star"></span>
+  // <span id="2" class="fa fa-star"></span>
+  // <span id="3" class="fa fa-star"></span>
+  // <span id="4" class="fa fa-star"></span>
+  // <span id="5" class="fa fa-star"></span>`;
+
+  movieDetails.append(year, rated, director, actors);
+  movieDiv.append(titleH, poster, movieDetails, ratingDiv);
   main.appendChild(movieDiv);
+  document.querySelectorAll(".fa").forEach(star => {
+    star.addEventListener("click", rateMovie);
+  });
+}
+
+function rateMovie(event) {
+  let rating = event.target.dataset.id;
+  let movieId = event.target.parentElement.parentElement.dataset.id;
+
+  const url = `http://localhost:3000/reviews`;
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-type": "application/json", Allow: "application/json" },
+    body: JSON.stringify({ user_id: "1", movie_id: movieId, rating: rating })
+  })
+    .then(resp => resp.json())
+    .then(json => console.log(json));
 }

@@ -9,3 +9,7 @@
 .contain {
   object-fit: contain;
 }
+
+.checked {
+  color: orange;
+}
