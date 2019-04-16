@@ -26,15 +26,15 @@ function renderSearchPoster(movieObj){
   let posterContainer = document.querySelector("#posters");
 
   // let link = document.createElement('a');
-  // link.dataset.lightbox = movieObj["Poster"]
-  // link.pathname = movieObj["Poster"]
-  // '<a href="images/image-1.jpg" data-lightbox="image-1" data-title="My caption">Image #1</a>'
+  // link.dataset.id = movieObj["imdbID"]
+  // link.href = movieObj["imdbID"]
 
-  // let image = document.createElement("img");
-  // image.dataset.id = movieObj["imdbID"]
-  // image.src = movieObj["Poster"];
-  // image.alt = movieObj["Title"]
-  posterContainer.appendChild(link);
+  let image = document.createElement("img");
+  image.src = movieObj["Poster"];
+  image.alt = movieObj["Title"]
+  // link.appendChild(image)
+  // posterContainer.appendChild(link);
+  posterContainer.appendChild(image)
 }
 
 // function renderPoster(movie) {
