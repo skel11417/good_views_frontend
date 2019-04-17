@@ -3,6 +3,28 @@ document.addEventListener("DOMContentLoaded", initialize);
 function initialize() {
   const form = document.querySelector("form");
   form.addEventListener("submit", searchMovies);
+
+  loadRecent();
+}
+
+function loadRecent() {
+  fetch("http://localhost:3000/users/?recent=true")
+    .then(resp => resp.json())
+    .then(movies => {
+      movies.forEach(renderRecentMovie);
+    });
+}
+
+function renderRecentMovie(movie) {
+  let mainDiv = document.querySelector("#main");
+  let posterDiv = document.querySelector("#poster");
+  let image = document.createElement("img");
+  posterDiv.innerHTML = "";
+  image.src = movie.poster;
+  image.dataset.id = movie.imdb_id;
+  posterDiv.appendChild(image);
+  image.addEventListener("click", posterClickHandler);
+  mainDiv.appendChild(image);
 }
 
 function searchMovies(event) {
@@ -15,37 +37,22 @@ function searchMovies(event) {
   event.target.reset();
 }
 
-function renderSearchPosters(omdbObj) {
-  let posterDiv = document.querySelector("#main");
-  posterDiv.innerHTML = "";
-  let movies = omdbObj["Search"];
+function renderSearchPosters(movies) {
+  let mainDiv = document.querySelector("#main");
+  mainDiv.innerHTML = "";
   movies.forEach(renderSearchPoster);
 }
 
 function renderSearchPoster(movieObj) {
-  let posterContainer = document.querySelector("#main");
-
-  // let link = document.createElement('a');
-  // link.dataset.id = movieObj["imdbID"]
-  // link.href = movieObj["imdbID"]
-
+  let mainDiv = document.querySelector("#main");
   let image = document.createElement("img");
   image.src = movieObj["Poster"];
   image.alt = movieObj["Title"];
   image.dataset.id = movieObj["imdbID"];
   image.addEventListener("click", posterClickHandler);
-  // link.appendChild(image)
-  // posterContainer.appendChild(link);
-  posterContainer.appendChild(image);
-}
 
-// function renderPoster(movie) {
-//   let posterDiv = document.querySelector("#poster");
-//   let image = document.createElement("img");
-//   posterDiv.innerHTML = "";
-//   image.src = movie.poster;
-//   posterDiv.appendChild(image);
-// }
+  mainDiv.appendChild(image);
+}
 
 function posterClickHandler(event) {
   event.preventDefault();
@@ -58,8 +65,8 @@ function posterClickHandler(event) {
 
 function showMovie(movie) {
   // Clear container div
-  let main = document.getElementById("main");
-  main.innerHTML = "";
+  let mainDiv = document.getElementById("main");
+  mainDiv.innerHTML = "";
   // Create movie elements
   let movieDiv = document.createElement("div");
   let titleH = document.createElement("h2");
@@ -69,19 +76,19 @@ function showMovie(movie) {
   let rated = document.createElement("li");
   let director = document.createElement("li");
   let actors = document.createElement("li");
-  let plot = document.createElement("li")
+  let plot = document.createElement("li");
 
-  movieDiv.id = "movie"
+  movieDiv.id = "movie";
   movieDiv.dataset.id = movie.id;
   titleH.innerText = movie.title;
   year.innerText = `Released: ${movie.year}`;
   rated.innerText = `Rated: ${movie.rated}`;
   director.innerText = `Directed by: ${movie.director}`;
   actors.innerText = `Starring: ${movie.actors}`;
-  plot.innerText = `Summary: ${movie.plot}`
+  plot.innerText = `Summary: ${movie.plot}`;
   poster.src = movie.poster;
   let ratingDiv = document.createElement("div");
-  ratingDiv.id = "rating"
+  ratingDiv.id = "rating";
 
   let star1 = document.createElement("span");
   let star2 = document.createElement("span");
@@ -107,67 +114,67 @@ function showMovie(movie) {
 
   movieDetails.append(year, rated, director, actors, plot);
   movieDiv.append(titleH, poster, movieDetails, ratingDiv);
-  main.appendChild(movieDiv);
+  mainDiv.appendChild(movieDiv);
 
   // Review Logic
   let review = ratedByUser(movie, 1);
   if (review) {
     renderStars(review);
-    ratingDiv.dataset.id = review.id
+    ratingDiv.dataset.id = review.id;
   } else {
     document.querySelectorAll(".fa").forEach(star => {
       star.addEventListener("click", rateMovie);
     });
   }
   // Show review / review form
-  if (review.content){
-    renderContent(review)
+  if (review.content) {
+    renderContent(review);
   } else if (review && !review.content) {
-    renderReviewForm()
+    renderReviewForm();
   }
 }
 
-function renderContent(review){
-  let ratingDiv = document.querySelector('#rating')
-  let reviewContent = document.createElement('div')
-  reviewContent.innerText = review.content
-  ratingDiv.appendChild(reviewContent)
+function renderContent(review) {
+  let ratingDiv = document.querySelector("#rating");
+  let reviewContent = document.createElement("div");
+  reviewContent.innerText = review.content;
+  ratingDiv.appendChild(reviewContent);
 }
 
-function renderReviewForm(){
-  let ratingDiv = document.querySelector('#rating')
-  let reviewForm = document.createElement('form')
-  reviewForm.id = "review-form"
-  reviewForm.addEventListener('submit', addReviewContent)
+function renderReviewForm() {
+  let ratingDiv = document.querySelector("#rating");
+  let reviewForm = document.createElement("form");
+  reviewForm.id = "review-form";
+  reviewForm.addEventListener("submit", addReviewContent);
 
-  let formLabel = document.createElement('label')
-  formLabel.innerText = "Add your review:"
+  let formLabel = document.createElement("label");
+  formLabel.innerText = "Add your review:";
 
-  let reviewContent = document.createElement('textarea')
-  reviewContent.type = 'text'
-  reviewContent.name = "content"
+  let reviewContent = document.createElement("textarea");
+  reviewContent.type = "text";
+  reviewContent.name = "content";
 
-  let submitButton = document.createElement('input')
-  submitButton.type = 'submit'
+  let submitButton = document.createElement("input");
+  submitButton.type = "submit";
 
-  reviewForm.append(formLabel, reviewContent, submitButton)
-  ratingDiv.appendChild(reviewForm)
+  reviewForm.append(formLabel, reviewContent, submitButton);
+  ratingDiv.appendChild(reviewForm);
 }
 
 // Add text to a review
-function addReviewContent(event){
-  event.preventDefault()
-  let reviewId = event.target.parentElement.dataset.id
-  let content = event.target.content.value
+function addReviewContent(event) {
+  event.preventDefault();
+  let reviewId = event.target.parentElement.dataset.id;
+  let content = event.target.content.value;
   const url = `http://localhost:3000/reviews/${reviewId}`;
   fetch(url, {
     method: "PATCH",
     headers: { "Content-type": "application/json", Allow: "application/json" },
-    body: JSON.stringify({content: content})
+    body: JSON.stringify({ content: content })
   })
     .then(resp => resp.json())
     .then(renderContent);
-  event.target.remove()
+  event.target.remove();
 }
 
 function ratedByUser(movie, user) {
@@ -204,13 +211,13 @@ function rateMovie(event) {
     .then(review => {
       renderStars(review);
       // add reviewId to reviewDiv
-      let ratingDiv = document.querySelector('#rating')
-      ratingDiv.dataset.id = review.id
+      let ratingDiv = document.querySelector("#rating");
+      ratingDiv.dataset.id = review.id;
       document.querySelectorAll(".fa").forEach(star => {
         star.removeEventListener("click", rateMovie);
       });
     });
-    renderReviewForm()
+  renderReviewForm();
 }
 
 // function ratingCheck() {}
