@@ -17,12 +17,9 @@ function loadRecent() {
 
 function renderRecentMovie(movie) {
   let mainDiv = document.querySelector("#main");
-  let posterDiv = document.querySelector("#poster");
   let image = document.createElement("img");
-  posterDiv.innerHTML = "";
   image.src = movie.poster;
   image.dataset.id = movie.imdb_id;
-  posterDiv.appendChild(image);
   image.addEventListener("click", posterClickHandler);
   mainDiv.appendChild(image);
 }
@@ -45,13 +42,32 @@ function renderSearchPosters(movies) {
 
 function renderSearchPoster(movieObj) {
   let mainDiv = document.querySelector("#main");
+  let article = document.createElement("article");
+  article.className = "card";
   let image = document.createElement("img");
   image.src = movieObj["Poster"];
   image.alt = movieObj["Title"];
   image.dataset.id = movieObj["imdbID"];
-  image.addEventListener("click", posterClickHandler);
+  article.innerHTML = `
+            <figure class="thumbnail">
+            <img src=${image.src} >
+            </figure>
+            <div class="card-content">
+              <!-- <h4>${movieObj["Title"]}</h4> -->
+              <p></p>
+            </div>`;
 
-  mainDiv.appendChild(image);
+  image.addEventListener("click", posterClickHandler);
+  mainDiv.appendChild(article);
+
+  // let mainDiv = document.querySelector("#main");
+  // let image = document.createElement("img");
+  // image.src = movieObj["Poster"];
+  // image.alt = movieObj["Title"];
+  // image.dataset.id = movieObj["imdbID"];
+  // image.addEventListener("click", posterClickHandler);
+  //
+  // mainDiv.appendChild(image);
 }
 
 function posterClickHandler(event) {
