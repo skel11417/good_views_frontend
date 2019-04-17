@@ -53,7 +53,7 @@ function renderSearchPoster(movieObj) {
             <img src=${image.src} >
             </figure>
             <div class="card-content">
-              <!-- <h4>${movieObj["Title"]}</h4> -->
+              <h4>${movieObj["Title"]}</h4>
               <p></p>
             </div>`;
 
