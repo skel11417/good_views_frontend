@@ -11,8 +11,34 @@
 }
 
 .thumbnail {
-  max-height: 450px;
+  max-height: 298px;
+  max-width: 200px;
+  overflow: hidden;
 }
+.thumbnail img {
+  max-width: 200px;
+}
+
+.card {
+  background: white;
+  margin-bottom: 2em;
+  max-width: 200px;
+  height: 379px;
+}
+
+.card:hover {
+  box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
+}
+
 .card-content {
+  padding: 2px;
+  padding-left: 2px;
+  text-align: center;
   max-width: 300px;
+  position: absolute;
+  bottom: 0;
+}
+
+.card-content p {
+  text-align: center;
 }
