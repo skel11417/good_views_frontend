@@ -1,3 +1,15 @@
+.checked {
+  color: orange;
+}
+
+#main {
+  margin-top: 40px;
+}
+
+#movie img {
+  size: 100%;
+}
+
 .thumbnail {
   max-height: 450px;
 }
