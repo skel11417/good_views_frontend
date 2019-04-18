@@ -119,7 +119,7 @@ function renderSearchPosters(movies) {
     <div id="myModal" class="modal">
 
       <!-- Modal content -->
-      <div class="modal-content">
+      <div id="modal-content small-width" class="modal-content">
         <span class="close">&times;</span>
       </div>
 
