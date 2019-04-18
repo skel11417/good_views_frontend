@@ -2,12 +2,14 @@ document.addEventListener("DOMContentLoaded", initialize);
 
 function initialize() {
   const form = document.querySelector("form");
-  const homeLink = document.querySelector('#home-link')
-  homeLink.addEventListener('click', loadAllRecentReviews)
-  const myMoviesLink = document.querySelector("#my-movies-link")
-  myMoviesLink.addEventListener('click', loadRecentUserReviews)
   form.addEventListener("submit", searchMovies);
 
+  const homeLink = document.querySelector('#home-link')
+  homeLink.addEventListener('click', loadAllRecentReviews)
+
+  const myMoviesLink = document.querySelector("#my-movies-link")
+  myMoviesLink.addEventListener('click', loadRecentUserReviews)
+  // Show all recently rated movies
   loadAllRecentReviews();
 }
 
@@ -23,6 +25,7 @@ function loadAllRecentReviews(){
 
 function renderReview(review) {
   let main = document.querySelector('#main')
+  // Create main card
   let reviewDiv = document.createElement('div')
   reviewDiv.className = "review-card"
   reviewDiv.id = review.id
@@ -45,13 +48,13 @@ function renderReview(review) {
   let ratingDiv = document.createElement("div");
   ratingDiv.classList.add("rating");
 
+  // Stars
   let star1 = document.createElement("span");
   let star2 = document.createElement("span");
   let star3 = document.createElement("span");
   let star4 = document.createElement("span");
   let star5 = document.createElement("span");
 
-  // Stars
   star1.dataset.id = "1";
   star1.className = "fa fa-star";
   star2.dataset.id = "2";
@@ -68,6 +71,7 @@ function renderReview(review) {
 
   main.appendChild(reviewDiv)
 
+  // Assign star rating
   let rating = review.rating;
   let stars = Array.prototype.slice
   .call(reviewDiv.querySelectorAll(".fa"))
@@ -98,6 +102,7 @@ function renderRecentMovie(movie) {
   mainDiv.appendChild(image);
 }
 
+// Search for movies and render results
 function searchMovies(event) {
   event.preventDefault();
   const title = event.target.title.value;
@@ -110,7 +115,20 @@ function searchMovies(event) {
 
 function renderSearchPosters(movies) {
   let mainDiv = document.querySelector("#main");
-  mainDiv.innerHTML = "";
+  mainDiv.innerHTML = `<!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+      </div>
+
+    </div>
+  `;
+  closeBtn = document.querySelector('.close')
+  closeBtn.addEventListener('click', hideModal)
+  document.addEventListener('click', hideModal)
   movies.forEach(renderSearchPoster);
 }
 
@@ -138,7 +156,7 @@ function renderSearchPoster(movieObj) {
 
   cardContent.appendChild(movieTitle)
   card.append(thumbnail, cardContent)
-  card.addEventListener("click", movieClickHandler);
+  card.addEventListener("click", showModal);
 }
 
 function movieClickHandler(event) {
