@@ -17,6 +17,8 @@
     const modal = document.getElementById('myModal');
     if (event.target == modal || event.target == closeBtn) {
       modal.style.display = "none";
+      // Clear modal content
+      modal.firstElementChild.innerHTML = ""
     }
   }
 
