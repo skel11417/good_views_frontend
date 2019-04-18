@@ -44,6 +44,10 @@
   height: 379px;
 }
 
+.card img {
+  padding: 5px;
+}
+
 .card:hover {
   box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
 }
