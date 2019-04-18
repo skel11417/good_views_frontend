@@ -11,6 +11,23 @@
   size: 100%;
 }
 
+.review-card {
+  width: 800px;
+  height:200px;
+  margin: 2px;
+  /* border: black outset 1px; */
+  background-color: #eeeeee
+}
+.review-card img {
+  height: 200px;
+  float: left;
+  padding: 5px;
+}
+
+.review-card:hover {
+  box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
+}
+
 .thumbnail {
   max-height: 298px;
   max-width: 200px;
@@ -53,14 +70,14 @@
   top: 0;
   left: 0;
   background-color: #111;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
   padding-top: 20px;
 }
 
 .sidenav a {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 32px;
   color: #818181;
   display: block;
 }
