@@ -13,10 +13,10 @@
 
 .review-card {
   width: 800px;
-  height:200px;
+  height: 200px;
   margin: 2px;
   /* border: black outset 1px; */
-  background-color: #eeeeee
+  background-color: #eeeeee;
 }
 .review-card img {
   height: 200px;
@@ -84,4 +84,8 @@
 
 .sidenav a:hover {
   color: #f1f1f1;
+}
+
+.add-favorite {
+  margin-left: 30px;
 }
