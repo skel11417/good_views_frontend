@@ -1,5 +1,7 @@
+// index.js
 document.addEventListener("DOMContentLoaded", initialize);
 
+// Add event listeners and load recent reviews
 function initialize() {
   const form = document.querySelector("form");
   form.addEventListener("submit", searchMovies);
@@ -49,34 +51,36 @@ function renderReview(review) {
   ratingDiv.classList.add("rating");
 
   // Stars
-  let star1 = document.createElement("span");
-  let star2 = document.createElement("span");
-  let star3 = document.createElement("span");
-  let star4 = document.createElement("span");
-  let star5 = document.createElement("span");
+  // let star1 = document.createElement("span");
+  // let star2 = document.createElement("span");
+  // let star3 = document.createElement("span");
+  // let star4 = document.createElement("span");
+  // let star5 = document.createElement("span");
 
-  star1.dataset.id = "1";
-  star1.className = "fa fa-star";
-  star2.dataset.id = "2";
-  star2.className = "fa fa-star";
-  star3.dataset.id = "3";
-  star3.className = "fa fa-star";
-  star4.dataset.id = "4";
-  star4.className = "fa fa-star";
-  star5.dataset.id = "5";
-  star5.className = "fa fa-star";
+  // star1.dataset.id = "1";
+  // star1.className = "fa fa-star";
+  // star2.dataset.id = "2";
+  // star2.className = "fa fa-star";
+  // star3.dataset.id = "3";
+  // star3.className = "fa fa-star";
+  // star4.dataset.id = "4";
+  // star4.className = "fa fa-star";
+  // star5.dataset.id = "5";
+  // star5.className = "fa fa-star";
+  //
+  // ratingDiv.append(star1, star2, star3, star4, star5);
 
-  ratingDiv.append(star1, star2, star3, star4, star5);
+  let stars = createStars()
+  stars.forEach(star => ratingDiv.append(star))
   reviewDiv.append(poster, title, ratingDiv, reviewContent)
-
   main.appendChild(reviewDiv)
 
-  // Assign star rating
+  // Assign star rating based on rating integer value
   let rating = review.rating;
-  let stars = Array.prototype.slice
-  .call(reviewDiv.querySelectorAll(".fa"))
+  let selectStars = Array.prototype.slice
+  .call(stars)
   .slice(0, rating);
-  stars.forEach(star => {
+  selectStars.forEach(star => {
     star.className += " checked";
   });
 }
@@ -109,8 +113,48 @@ function searchMovies(event) {
   const url = `http://localhost:3000/movies/?title=${title}`;
   fetch(url)
     .then(resp => resp.json())
-    .then(renderSearchPosters);
+    .then(renderSearchPosters)
+    .then(renderAverageReviews);
   event.target.reset();
+}
+
+function renderAverageReviews(){
+  getAverageReviews()
+  .then(ratings => {
+    let cards = document.querySelectorAll('.card')
+    // iterate through each movie card id key
+    // and assign a rating based on value
+
+    // purge ratings of all false values
+    cards.forEach(card => {
+      let cardId = card.dataset.id
+      if (ratings[cardId]){
+        let stars = Array.prototype.slice
+        .call(card.querySelectorAll(".fa"))
+        .slice(0, ratings[cardId]);
+
+        stars.forEach(star => {
+          star.className += " checked";
+        });
+      }
+      })
+    })
+}
+
+function getAverageReviews(){
+  const cards = document.querySelectorAll('.card')
+  let ids = []
+  cards.forEach(card => ids.push(card.dataset.id))
+
+  const url = `http://localhost:3000/movies/avg`
+  options = {
+    method: "POST",
+    headers: { "Content-type": "application/json", Allow: "application/json" },
+    body: JSON.stringify({ids: ids})
+  }
+
+  return fetch(url, options)
+  .then(resp => resp.json())
 }
 
 function renderSearchPosters(movies) {
@@ -125,6 +169,7 @@ function renderSearchPosters(movies) {
 
     </div>
   `;
+
   document.addEventListener('click', hideModal)
   movies.forEach(renderSearchPoster);
 }
@@ -151,9 +196,36 @@ function renderSearchPoster(movieObj) {
   let movieTitle = document.createElement('p')
   movieTitle.innerText = movieObj["Title"]
 
-  cardContent.appendChild(movieTitle)
+  // Create div for star rating and add stars
+  let ratingDiv = document.createElement("div");
+  let stars = createStars()
+  stars.forEach(star => ratingDiv.append(star))
+
+  cardContent.append(movieTitle, ratingDiv)
   card.append(thumbnail, cardContent)
   card.addEventListener("click", showModal);
+}
+
+// Helper method to generate star Elements
+function createStars(){
+  let star1 = document.createElement("span");
+  let star2 = document.createElement("span");
+  let star3 = document.createElement("span");
+  let star4 = document.createElement("span");
+  let star5 = document.createElement("span");
+
+  star1.dataset.id = "1";
+  star1.className = "fa fa-star";
+  star2.dataset.id = "2";
+  star2.className = "fa fa-star";
+  star3.dataset.id = "3";
+  star3.className = "fa fa-star";
+  star4.dataset.id = "4";
+  star4.className = "fa fa-star";
+  star5.dataset.id = "5";
+  star5.className = "fa fa-star";
+
+  return [star1, star2, star3, star4, star5]
 }
 
 function movieClickHandler(event) {
@@ -192,27 +264,31 @@ function showMovie(movie) {
   let ratingDiv = document.createElement("div");
   ratingDiv.id = "rating";
 
-  let star1 = document.createElement("span");
-  let star2 = document.createElement("span");
-  let star3 = document.createElement("span");
-  let star4 = document.createElement("span");
-  let star5 = document.createElement("span");
+  // let star1 = document.createElement("span");
+  // let star2 = document.createElement("span");
+  // let star3 = document.createElement("span");
+  // let star4 = document.createElement("span");
+  // let star5 = document.createElement("span");
+  //
+  // // Stars
+  // star1.dataset.id = "1";
+  // star1.className = "fa fa-star";
+  // star2.dataset.id = "2";
+  // star2.className = "fa fa-star";
+  // star3.dataset.id = "3";
+  // star3.className = "fa fa-star";
+  // star4.dataset.id = "4";
+  // star4.className = "fa fa-star";
+  // star5.dataset.id = "5";
+  // star5.className = "fa fa-star";
+  //
+  // ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
+  let stars = createStars()
   let ratingHead = document.createElement("h5");
-
-  // Stars
-  star1.dataset.id = "1";
-  star1.className = "fa fa-star";
-  star2.dataset.id = "2";
-  star2.className = "fa fa-star";
-  star3.dataset.id = "3";
-  star3.className = "fa fa-star";
-  star4.dataset.id = "4";
-  star4.className = "fa fa-star";
-  star5.dataset.id = "5";
-  star5.className = "fa fa-star";
   ratingHead.innerText = "Rate this Movie!";
 
-  ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
+  ratingDiv.append(ratingHead)
+  stars.forEach(star => ratingDiv.append(star))
 
   movieDetails.append(year, rated, director, actors, plot);
   movieDiv.append(titleH, poster, movieDetails, ratingDiv);
@@ -321,5 +397,3 @@ function rateMovie(event) {
   });
   renderReviewForm();
 }
-
-// function ratingCheck() {}
