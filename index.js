@@ -121,13 +121,10 @@ function renderSearchPosters(movies) {
       <!-- Modal content -->
       <div class="modal-content">
         <span class="close">&times;</span>
-        <p>Some text in the Modal..</p>
       </div>
 
     </div>
   `;
-  closeBtn = document.querySelector('.close')
-  closeBtn.addEventListener('click', hideModal)
   document.addEventListener('click', hideModal)
   movies.forEach(renderSearchPoster);
 }
