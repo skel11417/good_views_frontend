@@ -18,6 +18,7 @@ function initialize() {
 function loadAllRecentReviews(){
   let main = document.querySelector('#main')
   main.innerHTML = "<div style='width:800px'><h2>Recent Reviews</h2></div>"
+
   fetch("http://localhost:3000/reviews")
     .then(resp => resp.json())
     .then(movies => {
@@ -41,10 +42,11 @@ function renderReview(review) {
   // Title
   let title = document.createElement('p')
   title.innerText = review.movie.title
+  title.className = 'review-title'
 
-  // Review Content
-  let reviewContent = document.createElement('p')
-  reviewContent.innerText = review.content
+  let user = document.createElement('p')
+  user.innerText = `${review.user.name}:`
+  user.className = "review-user"
 
   // Rating
   let ratingDiv = document.createElement("div");
@@ -53,8 +55,16 @@ function renderReview(review) {
   // Stars
   let stars = createStars()
   stars.forEach(star => ratingDiv.append(star))
-  reviewDiv.append(poster, title, ratingDiv, reviewContent)
+  reviewDiv.append(poster, title, ratingDiv, user)
   main.appendChild(reviewDiv)
+
+  // Review Content (added if it exists)
+  let reviewContent = document.createElement('p')
+  reviewContent.className = "review-content"
+  if (review.content) {
+    reviewContent.innerText = review.content.trunc(140)
+    reviewDiv.appendChild(reviewContent)
+  }
 
   // Assign star rating based on rating integer value
   let rating = review.rating;
@@ -356,3 +366,9 @@ function rateMovie(event) {
   });
   renderReviewForm();
 }
+
+// Truncator helper function
+String.prototype.trunc = String.prototype.trunc ||
+      function(n){
+          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+      };
