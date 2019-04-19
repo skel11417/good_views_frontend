@@ -14,10 +14,10 @@ function initialize() {
 }
 
 function loadUserFavorites() {
-  event.preventDefault();
+  // event.preventDefault();
   let mainDiv = document.querySelector("#main");
   mainDiv.innerHTML = "";
-  fetch("http://localhost:3000/users/1/?favorites=true")
+  fetch("http://localhost:3000/users/1/?favorites=all")
     .then(resp => resp.json())
     .then(reviews => {
       reviews.forEach(renderFavorite);
@@ -115,17 +115,6 @@ function renderReview(review) {
   });
 }
 
-function loadRecentUserReviews(event) {
-  event.preventDefault();
-  let mainDiv = document.querySelector("#main");
-  mainDiv.innerHTML = "";
-  fetch("http://localhost:3000/users/?recent=true")
-    .then(resp => resp.json())
-    .then(review => {
-      review.forEach(renderRecentMovie);
-    });
-}
-
 function renderRecentMovie(review) {
   let movie = review.movie;
   let mainDiv = document.querySelector("#main");
@@ -145,57 +134,81 @@ function renderRecentMovie(review) {
 
   let cardContent = document.createElement("div");
   cardContent.className = "card-content";
-
   let addButton = document.createElement("button");
-  addButton.innerText = "Add to favorites";
-  addButton.className = "add-favorite";
-  addButton.dataset.id = review.id;
-  cardContent.appendChild(addButton);
+  if (!review.rank) {
+    addButton.innerText = "Add to favorites";
+    addButton.className = "add-favorite";
+    addButton.dataset.id = review.id;
+    cardContent.appendChild(addButton);
+  }
   card.append(thumbnail, cardContent);
   // card.addEventListener("click", movieClickHandler);
   addButton.addEventListener("click", addToUserFavorites);
-
-  // let mainDiv = document.querySelector("#main");
-  // let image = document.createElement("img");
-  // image.src = movie.poster;
-  // image.dataset.id = movie.imdb_id;
-  // image.addEventListener("click", movieClickHandler);
-  // let addButton = document.createElement("button");
-  // addButton.value = "Add to favorites";
-  // image.appendChild(addButton);
-  // mainDiv.appendChild(image);
 }
 
-// Add to favorites handler
-function addToUserFavorites(event) {
+function loadRecentUserReviews(event) {
   event.preventDefault();
-  debugger;
-  let lastRank = getUserFavRank();
-  // let reviewId = event.target.dataset.id;
-  // const url = `http://localhost:3000/reviews/${reviewId}`;
-  // fetch(url, {
-  //   method: "PATCH",
-  //   headers: { "Content-type": "application/json", Allow: "application/json" },
-  //   body: JSON.stringify({ content: content })
-  // })
-  //   .then(resp => resp.json())
-  //   .then(renderContent);
-  // event.target.remove();
-}
-
-function getUserFavRank() {
-  fetch("http://localhost:3000/users/1/?favorites=true")
+  let mainDiv = document.querySelector("#main");
+  mainDiv.innerHTML = "";
+  fetch("http://localhost:3000/users/?recent=all")
     .then(resp => resp.json())
-    .then(reviews => {
-      getLastRank(reviews[reviews.length - 1]);
+    .then(review => {
+      review.forEach(renderRecentMovie);
     });
 }
-
-function getLastRank(review) {
-  let lastRank = review.rank;
-
-  return lastRank;
+// Add to favorites handler
+function getUserFavRank() {
+  return fetch("http://localhost:3000/users/1/?favorites=last").then(resp =>
+    resp.json()
+  );
 }
+
+function addToUserFavorites(event) {
+  event.preventDefault();
+  // debugger;
+  getUserFavRank().then(r => {
+    let reviewId = event.target.dataset.id;
+    let rank = r;
+    ++rank;
+    const url = `http://localhost:3000/reviews/${reviewId}`;
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+        Allow: "application/json"
+      },
+      body: JSON.stringify({ rank: rank })
+    })
+      .then(resp => resp.json())
+      .then(d => {
+        if (
+          window.confirm(
+            `Added ${
+              d.movie.title
+            } to your favorites! Go to your favorites now?`
+          )
+        ) {
+          loadUserFavorites();
+        } else {
+          event.target.remove();
+        }
+      });
+  });
+}
+
+// function removeLastFavorite(review) {
+//   let reviewId = review.id;
+//   if
+//   const url = `http://localhost:3000/reviews/${reviewId}`;
+//   fetch(url, {
+//     method: "PATCH",
+//     headers: { "Content-type": "application/json", Allow: "application/json" },
+//     body: JSON.stringify({ rank: nil })
+//   })
+//     .then(resp => resp.json())
+//     .then(renderContent);
+//   event.target.remove();
+// }
 
 function searchMovies(event) {
   event.preventDefault();
