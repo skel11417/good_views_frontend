@@ -302,6 +302,7 @@ function renderReviewForm() {
   let reviewContent = document.createElement("textarea");
   reviewContent.type = "text";
   reviewContent.name = "content";
+  reviewContent.required = true
 
   let submitButton = document.createElement("input");
   submitButton.type = "submit";
