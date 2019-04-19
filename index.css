@@ -41,7 +41,7 @@
   background: white;
   margin-bottom: 2em;
   max-width: 200px;
-  height: 379px;
+  height: 382px;
 }
 
 .card img {
@@ -57,12 +57,15 @@
   padding-left: 2px;
   text-align: center;
   max-width: 300px;
-  position: absolute;
   bottom: 0;
+  padding: 5px;
 }
 
 .card-content p {
   text-align: center;
+  margin-bottom: 1px;
+  margin-top: 0px;
+  size: auto;
 }
 
 /* Sidenav */
