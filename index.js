@@ -291,6 +291,7 @@ function renderContent(review) {
 
 function renderReviewForm() {
   let ratingDiv = document.querySelector("#rating");
+  ratingDiv.querySelector('h5').remove()
   let reviewForm = document.createElement("form");
   reviewForm.id = "review-form";
   reviewForm.addEventListener("submit", addReviewContent);
@@ -304,6 +305,7 @@ function renderReviewForm() {
 
   let submitButton = document.createElement("input");
   submitButton.type = "submit";
+  submitButton.className = "btn btn-outline-success"
 
   reviewForm.append(formLabel, reviewContent, submitButton);
   ratingDiv.appendChild(reviewForm);

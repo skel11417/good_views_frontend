@@ -3,6 +3,10 @@
   color: orange;
 }
 
+#rating span {
+  margin-bottom: 2px;
+}
+
 #main {
   margin-top: 40px;
 }
@@ -38,7 +42,6 @@
     border: solid 1px black;
     background-color: #fff;
     border-radius: 5px;
-    /* width: max-content; */
     max-width: max-content;
     padding: 5px;
     margin-left: 220px;
@@ -50,10 +53,23 @@
   box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
 }
 
-#review-form label {
-  font-size: 2em;
+#review-form * {
+  display: block;
 }
 
+#review-form label {
+  font-size: 1.2em;
+  width: 100%;
+  /* display: block; */
+  margin-bottom: 0;
+}
+
+#review-form input {
+  /* margin: 0px 50px 75px */
+}
+#review-form textarea {
+  /* display: block; */
+}
 
 .thumbnail {
   max-height: 298px;
