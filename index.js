@@ -98,7 +98,7 @@ function renderReview(review) {
   reviewContent.className = "review-content";
   if (review.content) {
     user.innerText += ":";
-    reviewContent.innerText = review.content.trunc(140);
+    reviewContent.innerText = review.content;
     reviewDiv.appendChild(reviewContent);
   }
 
