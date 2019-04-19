@@ -4,21 +4,56 @@ document.addEventListener("DOMContentLoaded", initialize);
 // Add event listeners and load recent reviews
 function initialize() {
   const form = document.querySelector("form");
+  const homeLink = document.querySelector("#home-link");
+  homeLink.addEventListener("click", loadAllRecentReviews);
+  const myMoviesLink = document.querySelector("#my-movies-link");
+  myMoviesLink.addEventListener("click", loadRecentUserReviews);
+  const myFavoritesLink = document.querySelector("#my-favorites-link");
+  myFavoritesLink.addEventListener("click", loadUserFavorites);
   form.addEventListener("submit", searchMovies);
 
-  const homeLink = document.querySelector('#home-link')
-  homeLink.addEventListener('click', loadAllRecentReviews)
-
-  const myMoviesLink = document.querySelector("#my-movies-link")
-  myMoviesLink.addEventListener('click', loadRecentUserReviews)
-  // Show all recently rated movies
   loadAllRecentReviews();
 }
 
-function loadAllRecentReviews(){
-  let main = document.querySelector('#main')
-  main.innerHTML = "<div style='width:800px'><h2>Recent Reviews</h2></div>"
+function loadUserFavorites() {
+  // event.preventDefault();
+  let mainDiv = document.querySelector("#main");
+  mainDiv.innerHTML = "";
+  fetch("http://localhost:3000/users/1/?favorites=all")
+    .then(resp => resp.json())
+    .then(reviews => {
+      reviews.forEach(renderFavorite);
+    });
+}
 
+function renderFavorite(review) {
+  let main = document.querySelector("#main");
+  let reviewDiv = document.createElement("div");
+  reviewDiv.className = "review-card";
+  reviewDiv.id = review.id;
+  reviewDiv.dataset.id = review.movie.imdb_id;
+  reviewDiv.addEventListener("click", movieClickHandler);
+
+  // Poster
+  let poster = document.createElement("img");
+  poster.src = review.movie.poster;
+
+  // Title
+  let title = document.createElement("p");
+  title.innerText = review.movie.title;
+
+  // Rank
+  let rank = document.createElement("p");
+  rank.innerText = `You gave this movie rank: ${review.rank} out of 10.`;
+
+  reviewDiv.append(poster, title, rank);
+
+  main.appendChild(reviewDiv);
+}
+
+function loadAllRecentReviews() {
+  let main = document.querySelector("#main");
+  main.innerHTML = "<div style='width:800px'><h2>Recent Reviews</h2></div>";
   fetch("http://localhost:3000/reviews")
     .then(resp => resp.json())
     .then(movies => {
@@ -27,74 +62,133 @@ function loadAllRecentReviews(){
 }
 
 function renderReview(review) {
-  let main = document.querySelector('#main')
+  let main = document.querySelector("#main");
   // Create main card
-  let reviewDiv = document.createElement('div')
-  reviewDiv.className = "review-card"
-  reviewDiv.id = review.id
-  reviewDiv.dataset.id = review.movie.imdb_id
-  reviewDiv.addEventListener('click', movieClickHandler)
+  let reviewDiv = document.createElement("div");
+  reviewDiv.className = "review-card";
+  reviewDiv.id = review.id;
+  reviewDiv.dataset.id = review.movie.imdb_id;
+  reviewDiv.addEventListener("click", movieClickHandler);
 
   // Poster
-  let poster = document.createElement('img')
-  poster.src = review.movie.poster
+  let poster = document.createElement("img");
+  poster.src = review.movie.poster;
 
   // Title
-  let title = document.createElement('p')
-  title.innerText = review.movie.title
-  title.className = 'review-title'
+  let title = document.createElement("p");
+  title.innerText = review.movie.title;
+  title.className = "review-title";
 
-  let user = document.createElement('p')
-  user.innerText = review.user.name
-  user.className = "review-user"
+  let user = document.createElement("p");
+  user.innerText = review.user.name;
+  user.className = "review-user";
 
   // Rating
   let ratingDiv = document.createElement("div");
   ratingDiv.classList.add("rating");
 
   // Stars
-  let stars = createStars()
-  stars.forEach(star => ratingDiv.append(star))
-  reviewDiv.append(poster, title, ratingDiv, user)
-  main.appendChild(reviewDiv)
+  let stars = createStars();
+  stars.forEach(star => ratingDiv.append(star));
+  reviewDiv.append(poster, title, ratingDiv, user);
+  main.appendChild(reviewDiv);
 
   // Review Content (added if it exists)
-  let reviewContent = document.createElement('p')
-  reviewContent.className = "review-content"
+  let reviewContent = document.createElement("p");
+  reviewContent.className = "review-content";
   if (review.content) {
-    user.innerText += ":"
-    reviewContent.innerText = review.content.trunc(140)
-    reviewDiv.appendChild(reviewContent)
+    user.innerText += ":";
+    reviewContent.innerText = review.content.trunc(140);
+    reviewDiv.appendChild(reviewContent);
   }
 
   // Assign star rating based on rating integer value
   let rating = review.rating;
-  let selectStars = Array.prototype.slice
-  .call(stars)
-  .slice(0, rating);
+  let selectStars = Array.prototype.slice.call(stars).slice(0, rating);
   selectStars.forEach(star => {
     star.className += " checked";
   });
 }
 
-function loadRecentUserReviews(event) {
-  event.preventDefault()
+function renderRecentMovie(review) {
+  let movie = review.movie;
   let mainDiv = document.querySelector("#main");
-  mainDiv.innerHTML = ""
-  fetch("http://localhost:3000/users/?recent=true")
-    .then(resp => resp.json())
-    .then(movies => {
-      movies.forEach(renderRecentMovie);
-    });
-}
+  let card = document.createElement("article");
+  card.className = "card";
+  card.dataset.id = movie.imdb_id;
+  mainDiv.appendChild(card);
 
-function renderRecentMovie(movie) {
-  let mainDiv = document.querySelector("#main");
+  let thumbnail = document.createElement("figure");
+  thumbnail.className = "thumbnail";
+
   let image = document.createElement("img");
   image.src = movie.poster;
-  image.dataset.id = movie.imdb_id;
-  image.addEventListener("click", movieClickHandler);
-  mainDiv.appendChild(image);
+  image.alt = movie.title;
+
+  thumbnail.appendChild(image);
+
+  let cardContent = document.createElement("div");
+  cardContent.className = "card-content";
+  let addButton = document.createElement("button");
+  if (!review.rank) {
+    addButton.innerText = "Add to favorites";
+    addButton.className = "add-favorite";
+    addButton.dataset.id = review.id;
+    cardContent.appendChild(addButton);
+  }
+  card.append(thumbnail, cardContent);
+  // card.addEventListener("click", movieClickHandler);
+  addButton.addEventListener("click", addToUserFavorites);
+}
+
+function loadRecentUserReviews(event) {
+  event.preventDefault();
+  let mainDiv = document.querySelector("#main");
+  mainDiv.innerHTML = "";
+  fetch("http://localhost:3000/users/?recent=all")
+    .then(resp => resp.json())
+    .then(review => {
+      review.forEach(renderRecentMovie);
+    });
+}
+// Add to favorites handler
+function getUserFavRank() {
+  return fetch("http://localhost:3000/users/1/?favorites=last").then(resp =>
+    resp.json()
+  );
+}
+
+function addToUserFavorites(event) {
+  event.preventDefault();
+  // debugger;
+  getUserFavRank().then(r => {
+    let reviewId = event.target.dataset.id;
+    let rank = r;
+    ++rank;
+    const url = `http://localhost:3000/reviews/${reviewId}`;
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+        Allow: "application/json"
+      },
+      body: JSON.stringify({ rank: rank })
+    })
+      .then(resp => resp.json())
+      .then(d => {
+        if (
+          window.confirm(
+            `Added ${
+              d.movie.title
+            } to your favorites! Go to your favorites now?`
+          )
+        ) {
+          loadUserFavorites();
+        } else {
+          event.target.remove();
+        }
+      });
+  });
 }
 
 // Search for movies and render results
@@ -109,43 +203,41 @@ function searchMovies(event) {
   event.target.reset();
 }
 
-function renderAverageReviews(){
-  getAverageReviews()
-  .then(ratings => {
-    let cards = document.querySelectorAll('.card')
+function renderAverageReviews() {
+  getAverageReviews().then(ratings => {
+    let cards = document.querySelectorAll(".card");
     // iterate through each movie card id key
     // and assign a rating based on value
 
     // purge ratings of all false values
     cards.forEach(card => {
-      let cardId = card.dataset.id
-      if (ratings[cardId]){
+      let cardId = card.dataset.id;
+      if (ratings[cardId]) {
         let stars = Array.prototype.slice
-        .call(card.querySelectorAll(".fa"))
-        .slice(0, ratings[cardId]);
+          .call(card.querySelectorAll(".fa"))
+          .slice(0, ratings[cardId]);
 
         stars.forEach(star => {
           star.className += " checked";
         });
       }
-      })
-    })
+    });
+  });
 }
 
-function getAverageReviews(){
-  const cards = document.querySelectorAll('.card')
-  let ids = []
-  cards.forEach(card => ids.push(card.dataset.id))
+function getAverageReviews() {
+  const cards = document.querySelectorAll(".card");
+  let ids = [];
+  cards.forEach(card => ids.push(card.dataset.id));
 
-  const url = `http://localhost:3000/movies/avg`
+  const url = `http://localhost:3000/movies/avg`;
   options = {
     method: "POST",
     headers: { "Content-type": "application/json", Allow: "application/json" },
-    body: JSON.stringify({ids: ids})
-  }
+    body: JSON.stringify({ ids: ids })
+  };
 
-  return fetch(url, options)
-  .then(resp => resp.json())
+  return fetch(url, options).then(resp => resp.json());
 }
 
 function renderSearchPosters(movies) {
@@ -159,7 +251,7 @@ function renderSearchPosters(movies) {
     </div>
   `;
 
-  document.addEventListener('click', hideModal)
+  document.addEventListener("click", hideModal);
   movies.forEach(renderSearchPoster);
 }
 
@@ -170,33 +262,33 @@ function renderSearchPoster(movieObj) {
   card.dataset.id = movieObj["imdbID"];
   mainDiv.appendChild(card);
 
-  let thumbnail = document.createElement('figure')
-  thumbnail.className = "thumbnail"
+  let thumbnail = document.createElement("figure");
+  thumbnail.className = "thumbnail";
 
   let image = document.createElement("img");
   image.src = movieObj["Poster"];
   image.alt = movieObj["Title"];
 
-  thumbnail.appendChild(image)
+  thumbnail.appendChild(image);
 
-  let cardContent = document.createElement('div')
-  cardContent.className = "card-content"
+  let cardContent = document.createElement("div");
+  cardContent.className = "card-content";
 
-  let movieTitle = document.createElement('p')
-  movieTitle.innerText = movieObj["Title"]
+  let movieTitle = document.createElement("p");
+  movieTitle.innerText = movieObj["Title"];
 
   // Create div for star rating and add stars
   let ratingDiv = document.createElement("div");
-  let stars = createStars()
-  stars.forEach(star => ratingDiv.append(star))
+  let stars = createStars();
+  stars.forEach(star => ratingDiv.append(star));
 
-  cardContent.append(movieTitle, ratingDiv)
-  card.append(thumbnail, cardContent)
+  cardContent.append(movieTitle, ratingDiv);
+  card.append(thumbnail, cardContent);
   card.addEventListener("click", showModal);
 }
 
 // Helper method to generate star Elements
-function createStars(){
+function createStars() {
   let star1 = document.createElement("span");
   let star2 = document.createElement("span");
   let star3 = document.createElement("span");
@@ -214,7 +306,7 @@ function createStars(){
   star5.dataset.id = "5";
   star5.className = "fa fa-star";
 
-  return [star1, star2, star3, star4, star5]
+  return [star1, star2, star3, star4, star5];
 }
 
 function movieClickHandler(event) {
@@ -253,12 +345,12 @@ function showMovie(movie) {
   let ratingDiv = document.createElement("div");
   ratingDiv.id = "rating";
 
-  let stars = createStars()
+  let stars = createStars();
   let ratingHead = document.createElement("h5");
   ratingHead.innerText = "Rate this Movie!";
 
-  ratingDiv.append(ratingHead)
-  stars.forEach(star => ratingDiv.append(star))
+  ratingDiv.append(ratingHead);
+  stars.forEach(star => ratingDiv.append(star));
 
   movieDetails.append(year, rated, director, actors, plot);
   movieDiv.append(titleH, poster, movieDetails, ratingDiv);
@@ -291,7 +383,7 @@ function renderContent(review) {
 
 function renderReviewForm() {
   let ratingDiv = document.querySelector("#rating");
-  ratingDiv.querySelector('h5').remove()
+  ratingDiv.querySelector("h5").remove();
   let reviewForm = document.createElement("form");
   reviewForm.id = "review-form";
   reviewForm.addEventListener("submit", addReviewContent);
@@ -302,11 +394,11 @@ function renderReviewForm() {
   let reviewContent = document.createElement("textarea");
   reviewContent.type = "text";
   reviewContent.name = "content";
-  reviewContent.required = true
+  reviewContent.required = true;
 
   let submitButton = document.createElement("input");
   submitButton.type = "submit";
-  submitButton.className = "btn btn-outline-success"
+  submitButton.className = "btn btn-outline-success";
 
   reviewForm.append(formLabel, reviewContent, submitButton);
   ratingDiv.appendChild(reviewForm);
@@ -367,12 +459,13 @@ function rateMovie(event) {
       document.querySelectorAll(".fa").forEach(star => {
         star.removeEventListener("click", rateMovie);
       });
-  });
+    });
   renderReviewForm();
 }
 
 // Truncator helper function
-String.prototype.trunc = String.prototype.trunc ||
-      function(n){
-          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
-      };
+String.prototype.trunc =
+  String.prototype.trunc ||
+  function(n) {
+    return this.length > n ? this.substr(0, n - 1) + "&hellip;" : this;
+  };
