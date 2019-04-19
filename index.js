@@ -51,25 +51,6 @@ function renderReview(review) {
   ratingDiv.classList.add("rating");
 
   // Stars
-  // let star1 = document.createElement("span");
-  // let star2 = document.createElement("span");
-  // let star3 = document.createElement("span");
-  // let star4 = document.createElement("span");
-  // let star5 = document.createElement("span");
-
-  // star1.dataset.id = "1";
-  // star1.className = "fa fa-star";
-  // star2.dataset.id = "2";
-  // star2.className = "fa fa-star";
-  // star3.dataset.id = "3";
-  // star3.className = "fa fa-star";
-  // star4.dataset.id = "4";
-  // star4.className = "fa fa-star";
-  // star5.dataset.id = "5";
-  // star5.className = "fa fa-star";
-  //
-  // ratingDiv.append(star1, star2, star3, star4, star5);
-
   let stars = createStars()
   stars.forEach(star => ratingDiv.append(star))
   reviewDiv.append(poster, title, ratingDiv, reviewContent)
@@ -84,7 +65,6 @@ function renderReview(review) {
     star.className += " checked";
   });
 }
-
 
 function loadRecentUserReviews(event) {
   event.preventDefault()
@@ -161,12 +141,10 @@ function renderSearchPosters(movies) {
   let mainDiv = document.querySelector("#main");
   mainDiv.innerHTML = `<!-- The Modal -->
     <div id="myModal" class="modal">
-
       <!-- Modal content -->
       <div id="modal-content small-width" class="modal-content">
         <span class="close">&times;</span>
       </div>
-
     </div>
   `;
 
@@ -264,25 +242,6 @@ function showMovie(movie) {
   let ratingDiv = document.createElement("div");
   ratingDiv.id = "rating";
 
-  // let star1 = document.createElement("span");
-  // let star2 = document.createElement("span");
-  // let star3 = document.createElement("span");
-  // let star4 = document.createElement("span");
-  // let star5 = document.createElement("span");
-  //
-  // // Stars
-  // star1.dataset.id = "1";
-  // star1.className = "fa fa-star";
-  // star2.dataset.id = "2";
-  // star2.className = "fa fa-star";
-  // star3.dataset.id = "3";
-  // star3.className = "fa fa-star";
-  // star4.dataset.id = "4";
-  // star4.className = "fa fa-star";
-  // star5.dataset.id = "5";
-  // star5.className = "fa fa-star";
-  //
-  // ratingDiv.append(ratingHead, star1, star2, star3, star4, star5);
   let stars = createStars()
   let ratingHead = document.createElement("h5");
   ratingHead.innerText = "Rate this Movie!";
