@@ -37,13 +37,13 @@
           </div>
         </div>
         <div class="col-9">
-
-          <div class="container-fluid">
-            <div id="form"class="row justify-content-center">
+          <div id="search" class="container-fluid">
+            <div id="form" class="row justify-content-center">
+              <!-- search form -->
               <form>
-                <input name="title" placeholder="Enter a title" required oninvalid="this.setCustomValidity('Fill this out dumbass')"
+                <input class="form-control col-9" name="title" autofocus="autofocus" type="search" placeholder="Enter a title" required oninvalid="this.setCustomValidity('Please enter a film title')"
                 oninput="this.setCustomValidity('')"/>
-                <input type="submit" name="submit" value="Search" />
+                <input class="form-control col-2" type="submit" name="submit" value="Search" />
               </form>
             </div>
         </div>

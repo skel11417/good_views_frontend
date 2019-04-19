@@ -37,6 +37,17 @@
   max-width: 200px;
 }
 
+form {
+  width: 100%;
+
+}
+
+body .form-control {
+  font-size: 3rem;
+  display: inline;
+}
+
+/* Card Styling */
 .card {
   background: white;
   margin-bottom: 2em;
