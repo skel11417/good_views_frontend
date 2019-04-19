@@ -12,14 +12,14 @@
 }
 
 .review-card {
-  width: 800px;
-  height:200px;
+  width: 75%;
+  height:300px;
   margin: 2px;
   /* border: black outset 1px; */
-  background-color: #eeeeee
+  background-color: #c9c9c938
 }
 .review-card img {
-  height: 200px;
+  height: 300px;
   float: left;
   padding: 5px;
 }
@@ -38,16 +38,22 @@
     border: solid 1px black;
     background-color: #fff;
     border-radius: 5px;
-    width: max-content;
+    /* width: max-content; */
+    max-width: max-content;
     padding: 5px;
-    margin-left: 140px;
-    min-width: 650px;
+    margin-left: 220px;
+    min-width: 60%;
     font-size: 1.2em;
 }
 
 .review-card:hover {
   box-shadow: 3px 3px 8px hsl(0, 0%, 70%);
 }
+
+#review-form label {
+  font-size: 2em;
+}
+
 
 .thumbnail {
   max-height: 298px;

@@ -45,7 +45,7 @@ function renderReview(review) {
   title.className = 'review-title'
 
   let user = document.createElement('p')
-  user.innerText = `${review.user.name}:`
+  user.innerText = review.user.name
   user.className = "review-user"
 
   // Rating
@@ -62,6 +62,7 @@ function renderReview(review) {
   let reviewContent = document.createElement('p')
   reviewContent.className = "review-content"
   if (review.content) {
+    user.innerText += ":"
     reviewContent.innerText = review.content.trunc(140)
     reviewDiv.appendChild(reviewContent)
   }
